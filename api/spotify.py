@@ -4,6 +4,7 @@ import requests
 import json
 from urllib.parse import quote
 
+#variablat me shkronja te medha jane perdorur per api url e keso gjerash (jane self descriptive)
 
 #  Client Keys
 CLIENT_ID = "24f7961ebf634777bb21227b44e49c73"
@@ -37,16 +38,16 @@ auth_query_parameters = {
 #TRACKS ARRAY
 tracksList=[]
 
-def getHeader():
+def getHeader(): #gjeneron headerin me token pasi qe duhet per cdo request me u dergu edhe tokeni :)
     auth_header = {"Authorization": "Bearer {}".format(session['token'])}
     return auth_header
 
-def getAuth():
+def getAuth(): #authenticohet (kjo metod thirret nga klasa app.py)
     url_args = "&".join(["{}={}".format(key, quote(val)) for key, val in auth_query_parameters.items()])
     auth_url = "{}/?{}".format(SPOTIFY_AUTH_URL, url_args)
     return auth_url
 
-def authresponse(auth_token):
+def authresponse(auth_token): #response nga authorizimi (thirret nga klasa app.py)
     code_payload = {
         "grant_type": "authorization_code",
         "code": str(auth_token),
@@ -64,7 +65,7 @@ def authresponse(auth_token):
 #endpoint per playlists(duhet me ja u gjeneru cdo playliste kenget(id perkatesisht))
 GET_PLAYLISTS_ENDPOINT="{}/{}/{}".format(SPOTIFY_API_URL,'me','playlists')
 
-def get_playlists():
+def get_playlists(): #cdo playliste merr kjo metod dhe per cdo playlist thirr metodet get_several_tracks ku gjenerohen tgjitha kenget dhe futen ne listen tracksList
     url=GET_PLAYLISTS_ENDPOINT
     resp=requests.get(url,headers=getHeader())
     resp=resp.json()
