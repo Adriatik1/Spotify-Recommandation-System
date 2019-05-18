@@ -1,0 +1,22 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+
+<div id="main">
+    <h2>SPOTIFY API</h2>
+    <p>Ju lutem klikoni me poshte per te marr autorizimin</p>
+    <a href="/getauth" class="btn btn-primary">Merr Autorizimin</a>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+#main{
+    width: 40%;
+    margin-left: 40%;
+    margin-top: 10%;
+}
+</style>
+
+{% endblock %}
