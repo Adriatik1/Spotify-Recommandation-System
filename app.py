@@ -5,6 +5,7 @@ import json
 from api import spotify #e kom kriju nji package me emrin api e ne ta eshte nji klase me emrin spotify e metodave te saj iu qasemi per me arr te dhena
 from flask_bootstrap import Bootstrap
 import pandas as pd
+import random
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
@@ -38,55 +39,133 @@ def getTracks():
         listaStr += "ID: " + val['id'] + "<br/>"
     return render_template('yoursongs.html', value=listaStr)
 
+
 @app.route('/authresponse/getSuggestions')
 def getSuggestions():
+    return render_template('suggestions.html')
+
+@app.route('/authresponse/getSuggestionsRequest')
+def getSuggestionsRequest():
     toSuggestStr = ''
     songs = json.loads(json.dumps(spotify.get_playlists()))
-    max2 = pd.read_csv('association_track_rules_max_2.csv', sep=',')
-    max3 = pd.read_csv('association_track_rules_custom_max_3.csv', sep=',')
+    songmax2 = pd.read_csv('association_track_rules_max_2.csv', sep=',')
+    songmax3 = pd.read_csv('association_track_rules_custom_max_3.csv', sep=',')
+    artistmax2 = pd.read_csv('association_artist_rules_custom_max_2.csv', sep=',')
+    artistmax3 = pd.read_csv('association_artist_rules_custom_max_3.csv', sep=',')
 
-    # i shtojme te gjitha id-te e kengeve te user ne nje liste
+
+    # i shtojme te gjitha id-te e kengeve te user ne nje liste dhe id te artisteve te user ne
+    # nje liste tjeter
     userSongs = []
+    userArtists = []
     for val in songs:
         userSongs.append(val['id'])
+        userArtists.append(val['artistid'])
 
-    toSuggest = []
+    # permes set-it i zhdukim duplikatet dhe pastaj e kthejme ne liste
+    userSongs = list(set(userSongs))
+    userArtists = list(set(userArtists))
+
+    songsToSuggest = []
     # per cdo ID te kengeve te shfrytezuesit shikojme se a ekziston ne csv fajll
     for val in userSongs:
         # per rregullat me 2 kenge -----------------------------------------------
         # nese jo, kalojme tutje te kenga tjeter
-        if(len(max2[max2['trackID1'].astype(str).str.contains(val)]) == 0):
+        if(len(songmax2[songmax2['trackID1'].astype(str).str.contains(val)]) == 0):
             continue
-        # nese po, marrim te gjitha rregullat me ate ID dhe i shtojme ne toSuggest
+        # nese po, marrim te gjitha rregullat me ate ID dhe i shtojme ne songsToSuggest
         else:
-            max2_temp = max2[max2['trackID1'].astype(str).str.contains(val)]
-            for index, row in max2_temp.iterrows():
-                toSuggest.append(row['trackID2'])
+            songmax2_temp = songmax2[songmax2['trackID1'].astype(str).str.contains(val)]
+            for index, row in songmax2_temp.iterrows():
+                # kontrollojme mos kete kenge vecse e pelqen ky shfrytezues
+                if str(row['trackID2']) not in userSongs:
+                    songsToSuggest.append(row['trackID2'])
 
         # per rregullat me 3 kenge -----------------------------------------------
-        if(len(max3[max3['trackID1'].astype(str).str.contains(val)]) == 0):
+        if(len(songmax3[songmax3['trackID1'].astype(str).str.contains(val)]) == 0):
+            continue
+        # nese ekziston kjo kenge ne nje rregull
+        else:
+            songmax3_temp = songmax3[songmax3['trackID1'].astype(str).str.contains(val)]
+            for index, row in songmax3_temp.iterrows():
+                # shikojme kenga e dyte ne rregull, a ekziston ne playlistat e userit, nese po
+                # atehere plotesohet kushti kenga1 && kenga2 -> kenga3
+                if(str(row['trackID2'])) in userSongs:
+                    # kontrollojme nese kenga3 vec eshte ne playlistat e userit
+                    if str(row['trackID3']) not in userSongs:
+                        songsToSuggest.append(row['trackID3'])
+
+    artistsToSuggest = []
+    # per cdo ID te artisteve te shfrytezuesit shikojme se a ekziston ne csv fajll
+    for val in userArtists:
+        # ngjashem si te kenget
+        if (len(artistmax2[artistmax2['artistID1'].astype(str).str.contains(val)]) == 0):
             continue
         else:
-            max3_temp = max3[max3['trackID1'].astype(str).str.contains(val)]
-            for index, row in max3_temp.iterrows():
-                if(str(row['trackID2'])) in userSongs:
-                    toSuggest.append(row['trackID3'])
+            artistmax2_temp = artistmax2[artistmax2['artistID1'].astype(str).str.contains(val)]
+            for index, row in artistmax2_temp.iterrows():
+                if str(row['artistID2']) not in userArtists:
+                    artistsToSuggest.append(row['artistID2'])
 
+        # per rregullat me 3 kenge -----------------------------------------------
+        if (len(artistmax3[artistmax3['artistID1'].astype(str).str.contains(val)]) == 0):
+            continue
+        else:
+            artistmax3_temp = artistmax3[artistmax3['artistID1'].astype(str).str.contains(val)]
+            for index, row in artistmax3_temp.iterrows():
+                if (str(row['artistID2'])) in userArtists:
+                    if str(row['artistID3']) not in userArtists:
+                        artistsToSuggest.append(row['artistID3'])
 
-    # permes set-it i zhdukim duplikatet dhe pastaj e kthejme ne liste
-    toSuggest = list(set(toSuggest))
+    # zhdukim duplikatet
+    songsToSuggest = list(set(songsToSuggest))
+    songsToSuggestNames = []
+    artistsToSuggest = list(set(artistsToSuggest))
+    artistsToSuggestNames = []
 
-    # ----
+    random.shuffle(songsToSuggest)
+    random.shuffle(artistsToSuggest)
+
     allTracksdf = pd.read_csv('SpotifyAudioArtistsOK3.csv',sep=',')
-    # ----
 
-    for x in toSuggest:
-        toSuggestStr += "ID: " + x + "<br />Emri: "
+    #toSuggestStr += "<h1> Kenge </h1> <br />"
+    for x in songsToSuggest:
+        #toSuggestStr += "ID: " + x + "<br />Emri: "
         allTracksdf_temp = allTracksdf[allTracksdf['trackID'] == x]
         for index, row in allTracksdf_temp.iterrows():
-            toSuggestStr += row['track_name'] + "<br />====================================<br />"
-    toSuggestStr += "Numri i kengeve te sugjeruara: " + str(len(toSuggest)) + "<br /><br /."
-    return render_template('suggestions.html', value=toSuggestStr)
+            #toSuggestStr += str(row['track_name']) + "<br />====================================<br />"
+            songsToSuggestNames.append(str(row['track_name']))
+
+    #toSuggestStr += "Numri i kengeve te sugjeruara: " + str(len(songsToSuggest)) + "<br /><br />"
+
+    #toSuggestStr += "<h1> Artiste </h1> <br />"
+    for x in artistsToSuggest:
+        #toSuggestStr += "ID: " + x + "<br />Emri: "
+        allTracksdf_temp = allTracksdf[allTracksdf['artistID'] == x]
+        for index, row in allTracksdf_temp.iterrows():
+            #toSuggestStr += str(row['artist_name']) + "<br />====================================<br />"
+            artistsToSuggestNames.append(str(row['artist_name']))
+            break
+    toSuggestStr += "Numri i artisteve te sugjeruar: " + str(len(artistsToSuggest)) + "<br /><br />"
+
+    allLists = []
+
+    songsToSuggest = songsToSuggest[:7]
+    songsToSuggestNames = songsToSuggestNames[:7]
+    artistsToSuggest = artistsToSuggest[:7]
+    artistsToSuggestNames = artistsToSuggestNames[:7]
+
+    songImages = spotify.get_several_tracks_req(songsToSuggest)
+    artistImages = spotify.get_several_artists(artistsToSuggest)
+
+    allLists.append(songsToSuggest)
+    allLists.append(songsToSuggestNames)
+    allLists.append(songImages)
+    allLists.append(artistsToSuggest)
+    allLists.append(artistsToSuggestNames)
+    allLists.append(artistImages)
+
+    return jsonify({'data': render_template('AJAXresponse.html', myList=allLists)})
 
 
 if __name__ == '__main__':
