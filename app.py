@@ -42,50 +42,93 @@ def getTracks():
 def getSuggestions():
     toSuggestStr = ''
     songs = json.loads(json.dumps(spotify.get_playlists()))
-    max2 = pd.read_csv('association_track_rules_max_2.csv', sep=',')
-    max3 = pd.read_csv('association_track_rules_custom_max_3.csv', sep=',')
+    songmax2 = pd.read_csv('association_track_rules_max_2.csv', sep=',')
+    songmax3 = pd.read_csv('association_track_rules_custom_max_3.csv', sep=',')
+    artistmax2 = pd.read_csv('association_artist_rules_custom_max_2.csv',sep=',')
+    artistmax3 = pd.read_csv('association_artist_rules_custom_max_3.csv', sep=',')
+
 
     # i shtojme te gjitha id-te e kengeve te user ne nje liste
     userSongs = []
+    userArtists = []
     for val in songs:
         userSongs.append(val['id'])
+        userArtists.append(val['artistid'])
 
-    toSuggest = []
+    userSongs = list(set(userSongs))
+    userArtists = list(set(userArtists))
+
+    songsToSuggest = []
     # per cdo ID te kengeve te shfrytezuesit shikojme se a ekziston ne csv fajll
     for val in userSongs:
         # per rregullat me 2 kenge -----------------------------------------------
         # nese jo, kalojme tutje te kenga tjeter
-        if(len(max2[max2['trackID1'].astype(str).str.contains(val)]) == 0):
+        if(len(songmax2[songmax2['trackID1'].astype(str).str.contains(val)]) == 0):
             continue
-        # nese po, marrim te gjitha rregullat me ate ID dhe i shtojme ne toSuggest
+        # nese po, marrim te gjitha rregullat me ate ID dhe i shtojme ne songsToSuggest
         else:
-            max2_temp = max2[max2['trackID1'].astype(str).str.contains(val)]
-            for index, row in max2_temp.iterrows():
-                toSuggest.append(row['trackID2'])
+            songmax2_temp = songmax2[songmax2['trackID1'].astype(str).str.contains(val)]
+            for index, row in songmax2_temp.iterrows():
+                if str(row['trackID2']) not in userSongs:
+                    songsToSuggest.append(row['trackID2'])
 
         # per rregullat me 3 kenge -----------------------------------------------
-        if(len(max3[max3['trackID1'].astype(str).str.contains(val)]) == 0):
+        if(len(songmax3[songmax3['trackID1'].astype(str).str.contains(val)]) == 0):
             continue
         else:
-            max3_temp = max3[max3['trackID1'].astype(str).str.contains(val)]
-            for index, row in max3_temp.iterrows():
+            songmax3_temp = songmax3[songmax3['trackID1'].astype(str).str.contains(val)]
+            for index, row in songmax3_temp.iterrows():
                 if(str(row['trackID2'])) in userSongs:
-                    toSuggest.append(row['trackID3'])
+                    if str(row['trackID3']) not in userSongs:
+                        songsToSuggest.append(row['trackID3'])
 
+    artistsToSuggest = []
+    # per cdo ID te artisteve te shfrytezuesit shikojme se a ekziston ne csv fajll
+    for val in userArtists:
+        # per rregullat me 2 artiste -----------------------------------------------
+        # nese jo, kalojme tutje te kenga tjeter
+        if (len(artistmax2[artistmax2['artistID1'].astype(str).str.contains(val)]) == 0):
+            continue
+        # nese po, marrim te gjitha rregullat me ate ID dhe i shtojme ne songsToSuggest
+        else:
+            artistmax2_temp = artistmax2[artistmax2['artistID1'].astype(str).str.contains(val)]
+            for index, row in artistmax2_temp.iterrows():
+                if str(row['artistID2']) not in userArtists:
+                    artistsToSuggest.append(row['artistID2'])
+
+        # per rregullat me 3 kenge -----------------------------------------------
+        if (len(artistmax3[artistmax3['artistID1'].astype(str).str.contains(val)]) == 0):
+            continue
+        else:
+            artistmax3_temp = artistmax3[artistmax3['artistID1'].astype(str).str.contains(val)]
+            for index, row in artistmax3_temp.iterrows():
+                if (str(row['artistID2'])) in userArtists:
+                    if str(row['artistID3']) not in userArtists:
+                        artistsToSuggest.append(row['artistID3'])
 
     # permes set-it i zhdukim duplikatet dhe pastaj e kthejme ne liste
-    toSuggest = list(set(toSuggest))
+    songsToSuggest = list(set(songsToSuggest))
+    artistsToSuggest = list(set(artistsToSuggest))
 
-    # ----
     allTracksdf = pd.read_csv('SpotifyAudioArtistsOK3.csv',sep=',')
-    # ----
 
-    for x in toSuggest:
+    toSuggestStr += "<h1> Kenge </h1> <br />"
+    for x in songsToSuggest:
         toSuggestStr += "ID: " + x + "<br />Emri: "
         allTracksdf_temp = allTracksdf[allTracksdf['trackID'] == x]
         for index, row in allTracksdf_temp.iterrows():
-            toSuggestStr += row['track_name'] + "<br />====================================<br />"
-    toSuggestStr += "Numri i kengeve te sugjeruara: " + str(len(toSuggest)) + "<br /><br /."
+            toSuggestStr += str(row['track_name']) + "<br />====================================<br />"
+    toSuggestStr += "Numri i kengeve te sugjeruara: " + str(len(songsToSuggest)) + "<br /><br />"
+
+    toSuggestStr += "<h1> Artiste </h1> <br />"
+    for x in artistsToSuggest:
+        toSuggestStr += "ID: " + x + "<br />Emri: "
+        allTracksdf_temp = allTracksdf[allTracksdf['artistID'] == x]
+        for index, row in allTracksdf_temp.iterrows():
+            toSuggestStr += str(row['artist_name']) + "<br />====================================<br />"
+            break
+    toSuggestStr += "Numri i artisteve te sugjeruar: " + str(len(artistsToSuggest)) + "<br /><br />"
+
     return render_template('suggestions.html', value=toSuggestStr)
 
 

@@ -86,6 +86,6 @@ def get_several_tracks(playlistID):
     item=0
     for item in resp['items']:
         print(item['track']['name'])
-        tracksList.append({"id":item['track']['id'],"name":item['track']['name'],"artist":item['track']['artists'][0]['name']})
+        tracksList.append({"id": item['track']['id'], "name": item['track']['name'], "artistid": item['track']['artists'][0]['id'], "artist": item['track']['artists'][0]['name']})
         #tracksList.append({'id':item['track']['id'],'artists':item['track']['artists']['name'],'name':item['track']['name']})
     return tracksList
