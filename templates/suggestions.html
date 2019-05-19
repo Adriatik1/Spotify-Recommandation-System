@@ -5,16 +5,22 @@
         <div class="col-md-6">
             <h2>Sugjerimet</h2>
             <br />
-            <div id="AJAXres"></div>
+            <div id="AJAXres">
+                <table id="tblAjax">
+                    <tr>
+                        <th>Foto</th>
+                        <th>Emri</th>
+                        <th>Id</th>
+                    </tr>
+                </table>
+            </div>
         </div>
 {% endblock content %}
 
 {% block scripts %}
 
 <script
-  src="https://code.jquery.com/jquery-3.4.1.js"
-  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-  crossorigin="anonymous">
+  src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous">
 </script>
 
 <script type="text/javascript">
@@ -26,7 +32,10 @@
             type: "GET",
             success: function(resp)
             {
-                $('#AJAXres').append(resp.data);
+                alert(JSON.stringify(resp))
+                $.each(resp,function(index,value){
+                    $('#tblAjax').append("<tr><td>"+value.id+"</td><td>"+value.name+"</td><td>"+value.img+"</td><tr>")
+                })
             }
         });
     });

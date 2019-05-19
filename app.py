@@ -44,6 +44,13 @@ def getTracks():
 def getSuggestions():
     return render_template('suggestions.html')
 
+@app.route('/testajax')
+def testajax():
+    return jsonify(
+        emri="Adriatik",
+        mbiemri="Ademi"
+    )
+
 @app.route('/authresponse/getSuggestionsRequest')
 def getSuggestionsRequest():
     toSuggestStr = ''
@@ -154,19 +161,23 @@ def getSuggestionsRequest():
     songsToSuggestNames = songsToSuggestNames[:7]
     artistsToSuggest = artistsToSuggest[:7]
     artistsToSuggestNames = artistsToSuggestNames[:7]
+    i=0
 
     songImages = spotify.get_several_tracks_req(songsToSuggest)
     artistImages = spotify.get_several_artists(artistsToSuggest)
 
-    allLists.append(songsToSuggest)
-    allLists.append(songsToSuggestNames)
-    allLists.append(songImages)
-    allLists.append(artistsToSuggest)
-    allLists.append(artistsToSuggestNames)
-    allLists.append(artistImages)
+    for i in range(0,6):
+        allLists.append({'id':songsToSuggest[i],'name':songsToSuggestNames[i],'img':songImages[i]})
 
-    return jsonify({'data': render_template('AJAXresponse.html', myList=allLists)})
-
+    #allLists.append({'id':songsToSuggest})
+    #allLists.append({'name':songsToSuggestNames})
+    #allLists.append({'img':songImages})
+    #allLists.append(artistsToSuggest)
+    #allLists.append(artistsToSuggestNames)
+    #allLists.append(artistImages)
+    print(allLists)
+    #return jsonify({'data': render_template('AJAXresponse.html', myList=allLists)})
+    return jsonify(allLists)
 
 if __name__ == '__main__':
     app.run(debug=True)
