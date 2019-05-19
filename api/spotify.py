@@ -1,8 +1,9 @@
 from __future__ import print_function
-from flask import Flask, render_template, request, redirect,g,session
+from flask import Flask, render_template, request, redirect,g,session, jsonify
 import requests
 import json
 from urllib.parse import quote
+
 
 #variablat me shkronja te medha jane perdorur per api url e keso gjerash (jane self descriptive)
 
