@@ -89,3 +89,42 @@ def get_several_tracks(playlistID):
         tracksList.append({"id": item['track']['id'], "name": item['track']['name'], "artistid": item['track']['artists'][0]['id'], "artist": item['track']['artists'][0]['name']})
         #tracksList.append({'id':item['track']['id'],'artists':item['track']['artists']['name'],'name':item['track']['name']})
     return tracksList
+
+def get_several_tracks_req(lista):
+    string = '?ids='
+    count = 0
+    for track in lista:
+        string += str(track)
+        if count != len(lista) - 1:
+            string += ","
+        count += 1
+
+    url = "{}/{}/{}".format(SPOTIFY_API_URL, 'tracks', string)
+    resp = requests.get(url, headers=getHeader())
+    resp = resp.json()
+    item = 0
+    result = []
+    print(resp)
+    for item in resp['tracks']:
+        #result.append({"id": item['id'], "image": item['images'][2]['url']})
+        result.append(item['album']['images'][1]['url'])
+    return result
+
+def get_several_artists(lista):
+    string = 'artists?ids='
+    count = 0
+    for artist in lista:
+        string += str(artist)
+        if count != len(lista)-1:
+            string += ","
+        count += 1
+
+    url = "{}/{}".format(SPOTIFY_API_URL, string)
+    resp = requests.get(url, headers=getHeader())
+    resp = resp.json()
+    item = 0
+    result = []
+    for item in resp['artists']:
+        #result.append({"id": item['artists'][count]['id'], "image": item['artists'][count]['images'][2]['url']})
+        result.append(item['images'][2]['url'])
+    return result

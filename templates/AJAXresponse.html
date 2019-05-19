@@ -1,0 +1,30 @@
+<h1> Kenget: </h1>
+
+<ol>
+    {% for j in range(0,myList[0]|length) %}
+        <li>
+            <ul>
+                <li>{{myList[1][j]|string}}</li>
+                <li>{{myList[0][j]|string}}</li>
+                <li><img src="{{myList[2][j]}}" height="150" width="150" /></li>
+            </ul>
+        </li>
+    {% endfor %}
+</ol>
+<!--<h3> Gjithsej jane sugjeruar {{myList[0]|length}} kenge</h3>-->
+
+<h1> Artistet: </h1>
+
+<ol>
+    {% for j in range(0,myList[2]|length) %}
+        <li>
+            <ul>
+                <li>{{myList[4][j]|string}}</li>
+                <li>{{myList[3][j]|string}}</li>
+                <li><img src="{{myList[5][j]}}"  width="150" height="150"/></li>
+            </ul>
+        </li>
+    {% endfor %}
+</ol>
+
+<!--<h3> Gjithsej jane sugjeruar {{myList[2]|length}} artiste</h3>-->

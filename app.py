@@ -5,6 +5,7 @@ import json
 from api import spotify #e kom kriju nji package me emrin api e ne ta eshte nji klase me emrin spotify e metodave te saj iu qasemi per me arr te dhena
 from flask_bootstrap import Bootstrap
 import pandas as pd
+import random
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
@@ -41,11 +42,15 @@ def getTracks():
 
 @app.route('/authresponse/getSuggestions')
 def getSuggestions():
+    return render_template('suggestions.html')
+
+@app.route('/authresponse/getSuggestionsRequest')
+def getSuggestionsRequest():
     toSuggestStr = ''
     songs = json.loads(json.dumps(spotify.get_playlists()))
     songmax2 = pd.read_csv('association_track_rules_max_2.csv', sep=',')
     songmax3 = pd.read_csv('association_track_rules_custom_max_3.csv', sep=',')
-    artistmax2 = pd.read_csv('association_artist_rules_custom_max_2.csv',sep=',')
+    artistmax2 = pd.read_csv('association_artist_rules_custom_max_2.csv', sep=',')
     artistmax3 = pd.read_csv('association_artist_rules_custom_max_3.csv', sep=',')
 
 
@@ -114,28 +119,53 @@ def getSuggestions():
 
     # zhdukim duplikatet
     songsToSuggest = list(set(songsToSuggest))
+    songsToSuggestNames = []
     artistsToSuggest = list(set(artistsToSuggest))
+    artistsToSuggestNames = []
+
+    random.shuffle(songsToSuggest)
+    random.shuffle(artistsToSuggest)
 
     allTracksdf = pd.read_csv('SpotifyAudioArtistsOK3.csv',sep=',')
 
-    toSuggestStr += "<h1> Kenge </h1> <br />"
+    #toSuggestStr += "<h1> Kenge </h1> <br />"
     for x in songsToSuggest:
-        toSuggestStr += "ID: " + x + "<br />Emri: "
+        #toSuggestStr += "ID: " + x + "<br />Emri: "
         allTracksdf_temp = allTracksdf[allTracksdf['trackID'] == x]
         for index, row in allTracksdf_temp.iterrows():
-            toSuggestStr += str(row['track_name']) + "<br />====================================<br />"
-    toSuggestStr += "Numri i kengeve te sugjeruara: " + str(len(songsToSuggest)) + "<br /><br />"
+            #toSuggestStr += str(row['track_name']) + "<br />====================================<br />"
+            songsToSuggestNames.append(str(row['track_name']))
 
-    toSuggestStr += "<h1> Artiste </h1> <br />"
+    #toSuggestStr += "Numri i kengeve te sugjeruara: " + str(len(songsToSuggest)) + "<br /><br />"
+
+    #toSuggestStr += "<h1> Artiste </h1> <br />"
     for x in artistsToSuggest:
-        toSuggestStr += "ID: " + x + "<br />Emri: "
+        #toSuggestStr += "ID: " + x + "<br />Emri: "
         allTracksdf_temp = allTracksdf[allTracksdf['artistID'] == x]
         for index, row in allTracksdf_temp.iterrows():
-            toSuggestStr += str(row['artist_name']) + "<br />====================================<br />"
+            #toSuggestStr += str(row['artist_name']) + "<br />====================================<br />"
+            artistsToSuggestNames.append(str(row['artist_name']))
             break
     toSuggestStr += "Numri i artisteve te sugjeruar: " + str(len(artistsToSuggest)) + "<br /><br />"
 
-    return render_template('suggestions.html', value=toSuggestStr)
+    allLists = []
+
+    songsToSuggest = songsToSuggest[:7]
+    songsToSuggestNames = songsToSuggestNames[:7]
+    artistsToSuggest = artistsToSuggest[:7]
+    artistsToSuggestNames = artistsToSuggestNames[:7]
+
+    songImages = spotify.get_several_tracks_req(songsToSuggest)
+    artistImages = spotify.get_several_artists(artistsToSuggest)
+
+    allLists.append(songsToSuggest)
+    allLists.append(songsToSuggestNames)
+    allLists.append(songImages)
+    allLists.append(artistsToSuggest)
+    allLists.append(artistsToSuggestNames)
+    allLists.append(artistImages)
+
+    return jsonify({'data': render_template('AJAXresponse.html', myList=allLists)})
 
 
 if __name__ == '__main__':
