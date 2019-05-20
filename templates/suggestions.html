@@ -8,9 +8,9 @@
             <div id="AJAXres">
                 <table id="tblAjax">
                     <tr>
-                        <th>Foto</th>
-                        <th>Emri</th>
                         <th>Id</th>
+                        <th>Emri</th>
+                        <th>Foto</th>
                     </tr>
                 </table>
             </div>
@@ -34,7 +34,7 @@
             {
                 alert(JSON.stringify(resp))
                 $.each(resp,function(index,value){
-                    $('#tblAjax').append("<tr><td>"+value.id+"</td><td>"+value.name+"</td><td>"+value.img+"</td><tr>")
+                    $('#tblAjax').append("<tr><td>"+value.id+"</td><td>"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><tr>")
                 })
             }
         });

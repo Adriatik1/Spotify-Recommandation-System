@@ -10,6 +10,13 @@ import random
 app = Flask(__name__)
 app.secret_key = "super secret key"
 Bootstrap(app)
+songmax2 = pd.read_csv('association_track_rules_max_2.csv', sep=',')
+songmax3 = pd.read_csv('association_track_rules_custom_max_3.csv', sep=',')
+artistmax2 = pd.read_csv('association_artist_rules_custom_max_2.csv', sep=',')
+artistmax3 = pd.read_csv('association_artist_rules_custom_max_3.csv', sep=',')
+allTracksdf = pd.read_csv('SpotifyAudioArtistsOK3.csv',sep=',')
+songs = ''
+
 
 #route e tregon pathin e webit (psh www.emri.com/) - te drejton ten metoda index, www.webi.com/getauth te drejton tek metoda getAuth etj.
 
@@ -33,6 +40,7 @@ def getTracks():
     #return jsonify(spotify.get_playlists())
     #songs = json.dumps(spotify.get_playlists())
     # marrim kenget si json
+    global songs
     songs = json.loads(json.dumps(spotify.get_playlists()))
     listaStr = ''
     for val in songs:
@@ -54,12 +62,7 @@ def testajax():
 @app.route('/authresponse/getSuggestionsRequest')
 def getSuggestionsRequest():
     toSuggestStr = ''
-    songs = json.loads(json.dumps(spotify.get_playlists()))
-    songmax2 = pd.read_csv('association_track_rules_max_2.csv', sep=',')
-    songmax3 = pd.read_csv('association_track_rules_custom_max_3.csv', sep=',')
-    artistmax2 = pd.read_csv('association_artist_rules_custom_max_2.csv', sep=',')
-    artistmax3 = pd.read_csv('association_artist_rules_custom_max_3.csv', sep=',')
-
+    #songs = json.loads(json.dumps(spotify.get_playlists()))
 
     # i shtojme te gjitha id-te e kengeve te user ne nje liste dhe id te artisteve te user ne
     # nje liste tjeter
@@ -73,9 +76,15 @@ def getSuggestionsRequest():
     userSongs = list(set(userSongs))
     userArtists = list(set(userArtists))
 
+    # bejme shuffle
+    random.shuffle(userSongs)
+    random.shuffle(userArtists)
+
     songsToSuggest = []
     # per cdo ID te kengeve te shfrytezuesit shikojme se a ekziston ne csv fajll
     for val in userSongs:
+        if len(songsToSuggest) > 7:
+            break
         # per rregullat me 2 kenge -----------------------------------------------
         # nese jo, kalojme tutje te kenga tjeter
         if(len(songmax2[songmax2['trackID1'].astype(str).str.contains(val)]) == 0):
@@ -105,6 +114,8 @@ def getSuggestionsRequest():
     artistsToSuggest = []
     # per cdo ID te artisteve te shfrytezuesit shikojme se a ekziston ne csv fajll
     for val in userArtists:
+        if len(artistsToSuggest) > 7:
+            break
         # ngjashem si te kenget
         if (len(artistmax2[artistmax2['artistID1'].astype(str).str.contains(val)]) == 0):
             continue
@@ -132,8 +143,6 @@ def getSuggestionsRequest():
 
     random.shuffle(songsToSuggest)
     random.shuffle(artistsToSuggest)
-
-    allTracksdf = pd.read_csv('SpotifyAudioArtistsOK3.csv',sep=',')
 
     #toSuggestStr += "<h1> Kenge </h1> <br />"
     for x in songsToSuggest:
@@ -166,8 +175,10 @@ def getSuggestionsRequest():
     songImages = spotify.get_several_tracks_req(songsToSuggest)
     artistImages = spotify.get_several_artists(artistsToSuggest)
 
-    for i in range(0,6):
+    for i in range(0,7):
         allLists.append({'id':songsToSuggest[i],'name':songsToSuggestNames[i],'img':songImages[i]})
+    for i in range(0, 7):
+        allLists.append({'id': artistsToSuggest[i], 'name': artistsToSuggestNames[i], 'img': artistImages[i]})
 
     #allLists.append({'id':songsToSuggest})
     #allLists.append({'name':songsToSuggestNames})
