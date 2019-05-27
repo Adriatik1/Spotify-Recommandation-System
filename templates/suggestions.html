@@ -31,6 +31,26 @@
         {
             margin: 0px auto;
         }
+        .buttonstyle
+        {
+           padding: 13px 20px;
+           font-size: 16px;
+           font-weight: 700;
+           background-color: #fff !important;
+           color: #1ed760!important;
+           outline: none;
+           border-radius: 10px;
+        }
+        .buttonstyle:hover
+        {
+           padding: 13px 20px;
+           font-size: 16px;
+           font-weight: 700;
+           background-color: #1ed760!important;
+           color: #fff!important;
+           outline: none;
+           border: none;
+         }
     </style>
 </head>
 <body>
@@ -50,11 +70,21 @@
 
             <div class="col-12 mt-5" >
                 <div id="AJAXres">
-                    <table id="tblAjax">
+                    <h3 class="text-white font-weight-bold mb-2 text-center">Artistët e sugjeruar</h3>
+                    <table id="tblAja" class="mt-4">
                         <tr>
                             <th class="text-white">Id</th>
-                            <th class="text-white">Emri</th>
+                            <th class="text-white">Emri i Artistit</th>
                             <th class="text-white">Foto</th>
+                        </tr>
+                    </table>
+                    <h3 class="text-white font-weight-bold text-center mb-2" style="margin-top: 12%;">Këngët e sugjeruara</h3>
+                    <table id="tblAjax" class="mt-4" >
+                        <tr>
+                            <th class="text-white">Id</th>
+                            <th class="text-white">Emri i Këngës</th>
+                            <th class="text-white">Foto</th>
+                            <th class="text-white">Shto në Spotify</th>
                         </tr>
                     </table>
                 </div>
@@ -79,10 +109,23 @@
             {
 
                 $.each(resp,function(index,value){
-                    $('#tblAjax').append("<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><tr>")
+                    $('#tblAjax').append("<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><td><a href=# class=\"btn btn-light buttonstyle\">Shto</a></td><tr>")
                 })
             }
         });
+         $.ajax(
+        {
+            url: "/authresponse/getSuggestionsRequestArtist",
+            type: "GET",
+            success: function(resps)
+            {
+
+                $.each(resps,function(index,value){
+                    $('#tblAja').append("<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><tr>")
+                })
+            }
+        });
+
     });
 </script>
 
