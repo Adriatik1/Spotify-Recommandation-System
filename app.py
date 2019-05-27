@@ -23,7 +23,6 @@ songs = ''
 @app.route('/')
 def index():
     return render_template('index.html')#render template kthen te dergon ne html(shfaq html)
-
 @app.route('/getauth')
 def getAuth():
     return redirect(spotify.getAuth()) #metoda redirect te ben redirect ne linkun qe ti e jep
@@ -44,12 +43,17 @@ def getTracks():
     songs = json.loads(json.dumps(spotify.get_playlists()))
     listaStr = ''
     for val in songs:
-        listaStr += "ID: " + val['id'] + "<br/>"
+        listaStr += "<tr class='text-white'><td> " + val['id']+"</td><td class='font-weight-bold'>"+val['name']+"</td><td>"+val['artist']+"</td></tr>"
     return render_template('yoursongs.html', value=listaStr)
 
 
 @app.route('/authresponse/getSuggestions')
 def getSuggestions():
+    global songs
+    songs = json.loads(json.dumps(spotify.get_playlists()))
+    listaStr = ''
+    for val in songs:
+        listaStr += "ID: " + val['id'] + "<br/>"
     return render_template('suggestions.html')
 
 @app.route('/testajax')
@@ -191,4 +195,5 @@ def getSuggestionsRequest():
     return jsonify(allLists)
 
 if __name__ == '__main__':
+    port = int(5000)
     app.run(debug=True)

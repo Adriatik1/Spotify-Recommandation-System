@@ -1,17 +1,56 @@
-{% extends "bootstrap/base.html" %}
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/main.css">
+<style>
+    body
+    {
+          background-image: url("/static/images/secondspotify.jpg");
+          background-size: 1900px 1080px;
+          background-position: center;
+          font-family: 'Montserrat', sans-serif;
+    }
 
-{% block content %}
-    <button class="btn btn-primary" onclick="test()">Test Ajax</button>
-    <div class="col-md-2"></div>
-        <div class="col-md-6">
-            <h2>Nice</h2>
-            <br />
-            <a href="/authresponse/getTracks" class="btn btn-primary">Shfaq Kenget</a>
+    .buttonstyle
+    {
+       padding: 13px 20px;
+       font-size: 16px;
+       font-weight: 700;
+       background-color: #1ed760 !important;
+    }
+    .buttonstyle:hover
+    {
+           padding: 13px 20px;
+           font-size: 16px;
+           font-weight: 700;
+           background-color: #fff !important;
+           color: #1ed760!important;
+           outline: none;
+    }
+</style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-light bg-dark bg-transparent">
+        <span class="navbar-brand mb-0 text-uppercase font-weight-bold text-left" style="font-size: 24px;color: #1ed760!important;">
+            <img src="/static/images/spotifylogo.png" style="width:35px;height:auto;">
+             Spotify Api
+        </span>
+    </nav>
+    <div class="container">
+      <div class="row">
+       <!--<button class="btn btn-success" onclick="test()">Test Ajax</button>-->
+        <div class="col-12 mt-5">
+              <h1 class="text-white font-weight-bold text-center" style="margin-top:10%;">Zgjedhni njërin nga opsionet</h1>
         </div>
-
-{% endblock content %}
-
-{% block scripts %}
+        <div class="col-12 mt-5" style="text-align: center">
+            <a href="/authresponse/getTracks" class="btn btn-success mr-4 buttonstyle">Shfaq këngët</a>
+            <a href="/authresponse/getSuggestions" class="btn btn-success buttonstyle">Merr sugjerime</a>
+        </div>
+      </div>
+    </div>
 
        <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 <script>
@@ -29,4 +68,5 @@
 
 </script>
 
-{% endblock %}
+</body>
+</html>

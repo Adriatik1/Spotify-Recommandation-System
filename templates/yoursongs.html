@@ -1,11 +1,79 @@
-{% extends "bootstrap/base.html" %}
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/main.css">
+    <style>
+        body
+        {
+            background-image: url("/static/images/song9.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Montserrat', sans-serif;
+        }
+        td
+        {
+            padding: 25px 25px;
+            border-bottom: 1px solid #fff;
+        }
+         th
+        {
+            padding: 25px 25px !important;
+            border-bottom: 1px solid #fff;
+            font-size: 20px;
+        }
 
-{% block content %}
-    <div class="col-md-2"></div>
-    <div class="col-md-6">
-        <h2>Kenget e tua</h2>
-        <br />
-        <div>{{value|safe}}</div>
-        <a href="/authresponse/getSuggestions" class="btn btn-primary">Merr sugjerime</a>
+        table
+        {
+            margin: 0px auto;
+        }
+        .buttonstyle
+        {
+           padding: 13px 20px;
+           font-size: 16px;
+           font-weight: 700;
+           background-color: #fff !important;
+           color: #1ed760!important;
+           outline: none;
+        }
+        .buttonstyle:hover
+        {
+           padding: 13px 20px;
+           font-size: 16px;
+           font-weight: 700;
+           background-color: #1ed760!important;
+           color: #fff!important;
+           outline: none;
+         }
+     </style>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-dark bg-transparent">
+        <span class="navbar-brand mb-0 text-uppercase font-weight-bold text-left text-white" style="font-size: 24px;">
+            <img src="/static/images/spotifywlogo.png" style="width:35px;height:auto;">
+             Spotify Api
+        </span>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-12"></div>
+            <div class="col-12  text-white mt-5">
+                <h1 class="text-center font-weight-bold">Këngët e tua</h1>
+                <br />
+                <table>
+                    <tr>
+                            <th class="text-white">Id</th>
+                            <th class="text-white">Kënga</th>
+                            <th class="text-white">Artisti</th>
+                    </tr>
+                    {{value|safe}}
+                </table>
+            </div>
+            <div class="col-12 mt-4 mb-4" style="text-align: center">
+                 <a href="/authresponse/getSuggestions" class="btn btn-light buttonstyle">Merr sugjerime</a>
+            </div>
+        </div>
     </div>
-{% endblock content %}
+</body>
+</html>

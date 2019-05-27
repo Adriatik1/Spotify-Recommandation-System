@@ -1,23 +1,45 @@
-{% extends "bootstrap/base.html" %}
-
-{% block content %}
-
-<div id="main">
-    <h2>SPOTIFY API</h2>
-    <p>Ju lutem klikoni me poshte per te marr autorizimin</p>
-    <a href="/getauth" class="btn btn-primary">Merr Autorizimin</a>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/main.css">
 <style>
-#main{
-    width: 40%;
-    margin-left: 40%;
-    margin-top: 10%;
-}
-</style>
+    body
+    {
+        background-image: url("static/images/song1.jpg");
+        background-size: cover;
 
-{% endblock %}
+         background-position: center;
+        font-family: 'Montserrat', sans-serif;
+       }
+    #main{
+    text-align: center;
+    margin: auto;
+}
+
+</style>
+</head>
+<body >
+
+ <div  class="container ">
+    <div class="row ">
+
+     <div class="col-12 mt-5">
+      <h1 class="text-white text-center font-weight-bold mt-4">
+          <img src="/static/images/spotifywlogo.png" style="width:80px;height: auto;text-align: center;">
+           SPOTIFY API
+      </h1>
+     </div>
+     <div class="col-12 text-center mt-5" >
+      <p class="text-white " style="margin-top:15%;font-weight: 600;font-size: 19px;">Ju lutem klikoni më poshtë për të marr autorizimin</p>
+     </div>
+     <div class="col-12 mt-2" style="text-align:center;">
+      <a href="/getauth" class="btn btn-light text-success font-weight-bold" >Merr Autorizimin</a>
+     </div>
+    </div>
+ </div>
+</body>
+</html>
+
+
 

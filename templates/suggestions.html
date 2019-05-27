@@ -1,24 +1,69 @@
-{% extends "bootstrap/base.html" %}
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/main.css">
+    <style>
+        body
+        {
+            background-image: url("/static/images/song7.jpg");
+            background-size: 1900px 1080px;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Montserrat', sans-serif;
+        }
+        td
+        {
+            padding: 10px 20px;
+            border-bottom: 1px solid #fff;
+        }
+        th
+        {
+            padding: 10px 20px !important;
+            border-bottom: 1px solid #fff;
+        }
+        line
+        {
+            background-color: white;
+            width:100%;
+        }
+        table
+        {
+            margin: 0px auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-dark bg-transparent">
+        <span class="navbar-brand mb-0 text-uppercase font-weight-bold text-left text-white" style="font-size: 24px;">
+            <img src="/static/images/spotifywlogo.png" style="width:35px;height:auto;">
+             Spotify Api
+        </span>
+    </nav>
 
-{% block content %}
-    <div class="col-md-2"></div>
-        <div class="col-md-6">
-            <h2>Sugjerimet</h2>
-            <br />
-            <div id="AJAXres">
-                <table id="tblAjax">
-                    <tr>
-                        <th>Id</th>
-                        <th>Emri</th>
-                        <th>Foto</th>
-                    </tr>
-                </table>
+    <div class="container">
+      <div class="row justify-content-center">
+
+            <div class="col-12 mt-5">
+                <h1 class="text-white font-weight-bold text-center">Sugjerimet</h1>
             </div>
-        </div>
-{% endblock content %}
 
-{% block scripts %}
+            <div class="col-12 mt-5" >
+                <div id="AJAXres">
+                    <table id="tblAjax">
+                        <tr>
+                            <th class="text-white">Id</th>
+                            <th class="text-white">Emri</th>
+                            <th class="text-white">Foto</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
+      </div>
+    </div>
+</body>
+</html>
 <script
   src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous">
 </script>
@@ -32,13 +77,12 @@
             type: "GET",
             success: function(resp)
             {
-                alert(JSON.stringify(resp))
+
                 $.each(resp,function(index,value){
-                    $('#tblAjax').append("<tr><td>"+value.id+"</td><td>"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><tr>")
+                    $('#tblAjax').append("<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><tr>")
                 })
             }
         });
     });
 </script>
 
-{% endblock %}
