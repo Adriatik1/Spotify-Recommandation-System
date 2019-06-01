@@ -76,6 +76,20 @@ def get_playlists(): #cdo playliste merr kjo metod dhe per cdo playlist thirr me
         print(get_several_tracks(item['id']))
     return tracksList
 
+#shton kengen ne playlist
+def addto_playlist(songID,playlistID): #cdo playliste merr kjo metod dhe per cdo playlist thirr metodet get_several_tracks ku gjenerohen tgjitha kenget dhe futen ne listen tracksList
+    url=GET_PLAYLISTS_ENDPOINT
+    resp=requests.get(url,headers=getHeader())
+    resp=resp.json()
+
+#merr playlistat per mi shfaq kur te shton naj kange
+def get_playlists_combo():
+    url=GET_PLAYLISTS_ENDPOINT
+    resp=requests.get(url,headers=getHeader())
+    resp = resp.json();
+    print(resp)
+    return resp
+
 #endpoint per tracks
 GET_PLAYLIST_TRACKS_ENDPOINT = "{}/{}".format(SPOTIFY_API_URL, 'tracks')
 
@@ -128,3 +142,10 @@ def get_several_artists(lista):
         #result.append({"id": item['artists'][count]['id'], "image": item['artists'][count]['images'][2]['url']})
         result.append(item['images'][2]['url'])
     return result
+
+
+def add_track(playlistID,songID):
+    stringu="tracks?uris=spotify:track"
+    songs="{}:{}".format(stringu,songID)
+    url = "{}/{}/tracks?uris=spotify:track:{}".format(SPOTIFY_API_URL,'playlists',playlistID,songID)
+    resp = requests.get(url, headers=getHeader())

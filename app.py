@@ -64,6 +64,18 @@ def testajax():
         mbiemri="Ademi"
     )
 
+@app.route('/getPlaylistsCombo')
+def getPlaylistsCmb():
+    data=spotify.get_playlists_combo();
+    return jsonify(data)
+
+@app.route('/addto_playlist')
+def addto_playlist():
+    playlistId = request.args.get('playlistId')
+    songId = request.args.get('songId')
+    spotify.add_track(playlistId,songId)
+    return jsonify(success="Kenga u shtua me suksese!")
+
 @app.route('/authresponse/getSuggestionsRequest')
 def getSuggestionsRequest():
     toSuggestStr = ''

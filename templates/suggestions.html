@@ -1,5 +1,11 @@
 <html>
 <head>
+    <script
+  src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous">
+</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/main.css">
@@ -92,12 +98,62 @@
 
       </div>
     </div>
+
+
+    <!-- Modal -->
+<div class="modal fade" id="shtoTrack" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Zgjedh playlisten</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+<div class="col-sm-12">
+          <select class="form-control" id="cmb0">
+      </select>
+
+</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Anulo</button>
+        <button type="button" onclick="saveSong()" class="btn btn-primary">Ruaj</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Model end -->
+
 </body>
 </html>
-<script
-  src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous">
-</script>
 
+<script>
+
+    function ruajKengen(songId)
+    {
+        sessionStorage.setItem("songID",songId);
+        $("#shtoTrack").modal('show');
+    }
+    $(document).ready(function(){
+     $.ajax(
+        {
+            url: "/getPlaylistsCombo",
+            type: "GET",
+            success: function(resp)
+            {
+                $("#cmb0").html("");
+                $.each(resp.items,function(key,val){
+                var option = document.createElement("option");
+                option.value=val.id;
+                option.text=val.name;
+                $("#cmb0").append(option);
+                })
+            }
+        });
+    });
+</script>
 <script type="text/javascript">
     $(document).ready(function()
     {
@@ -109,7 +165,9 @@
             {
 
                 $.each(resp,function(index,value){
-                    $('#tblAjax').append("<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><td><a href=# class=\"btn btn-light buttonstyle\">Shto</a></td><tr>")
+                    var str="<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><td><button id="+value.id+" onclick='ruajKengen("+JSON.stringify(value.id)+")' class=\"btn btn-light buttonstyle\">Shto</button></td><tr>";
+                    $('#tblAjax').append(str);
+
                 })
             }
         });
@@ -122,10 +180,30 @@
 
                 $.each(resps,function(index,value){
                     $('#tblAja').append("<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><tr>")
+
                 })
             }
         });
 
     });
+
+    function saveSong(){
+    var plId = $('#cmb0').find(":selected").val();
+    var sId=sessionStorage.getItem("songID");
+    $.ajax({
+        url: '/addto_playlist',
+        type: "GET",
+        data:{'playlistId':plId,'songId':sId},
+        success:function(resp){
+        alert(JSON.stringify(resp.success));
+        $("#shtoTrack").modal('hide');
+        $("#"+sId).text("Shtuar")
+        $("#"+sId).prop("onclick", null).off("click");
+        }
+
+    })
+
+    }
 </script>
+
 
