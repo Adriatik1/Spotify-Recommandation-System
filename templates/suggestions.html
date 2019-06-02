@@ -93,6 +93,7 @@
                             <th class="text-white">Shto në Spotify</th>
                         </tr>
                     </table>
+
                 </div>
             </div>
 
@@ -154,9 +155,14 @@
         });
     });
 </script>
+
 <script type="text/javascript">
+
     $(document).ready(function()
     {
+ $('#tblAja > tr > td').remove();
+  $('#tblAjax > tr > td').remove();
+
         $.ajax(
         {
             url: "/authresponse/getSuggestionsRequest",
@@ -177,7 +183,6 @@
             type: "GET",
             success: function(resps)
             {
-
                 $.each(resps,function(index,value){
                     $('#tblAja').append("<tr class=\"text-white\"><td >"+value.id+"</td><td class=\"font-weight-bold\">"+value.name+"</td><td><img src='" + value.img + "' width='150' height='150'/></td><tr>")
 

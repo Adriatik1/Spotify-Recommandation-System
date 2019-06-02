@@ -150,7 +150,7 @@ def getSuggestionsRequest():
     i=0
 
     songImages = spotify.get_several_tracks_req(songsToSuggest)
-
+    allListsong.clear();
     for i in range(0,6):
         allListsong.append({'id':songsToSuggest[i],'name':songsToSuggestNames[i],'img':songImages[i]})
 
@@ -226,7 +226,7 @@ def getSuggestionsRequestArtist():
     i=0
 
     artistImages = spotify.get_several_artists(artistsToSuggest)
-
+    allListartist.clear();
     for i in range(0, 6):
          allListartist.append({'id': artistsToSuggest[i], 'name': artistsToSuggestNames[i], 'img': artistImages[i]})
 
