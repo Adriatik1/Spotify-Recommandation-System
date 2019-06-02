@@ -145,7 +145,6 @@ def get_several_artists(lista):
 
 
 def add_track(playlistID,songID):
-    stringu="tracks?uris=spotify:track"
-    songs="{}:{}".format(stringu,songID)
-    url = "{}/{}/tracks?uris=spotify:track:{}".format(SPOTIFY_API_URL,'playlists',playlistID,songID)
-    resp = requests.get(url, headers=getHeader())
+    url = "{}/{}/{}/tracks?uris=spotify:track:{}".format(SPOTIFY_API_URL,'playlists',playlistID,songID)
+    resp = requests.post(url, headers=getHeader())
+    print(resp.json)
